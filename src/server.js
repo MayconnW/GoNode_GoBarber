@@ -1,4 +1,8 @@
 const express = require('express')
+const session = require('express-session')
+const redis = require('redis')
+const redisClient = redis.createClient()
+const RedisStore = require('connect-redis')(session)
 const nunjucks = require('nunjucks')
 const path = require('path')
 
@@ -14,6 +18,18 @@ class App {
 
   middlewares () {
     this.express.use(express.urlencoded({ extended: false }))
+    this.express.use(
+      session({
+        store: new RedisStore({
+          host: '127.0.0.1',
+          port: 6379,
+          client: redisClient
+        }),
+        secret: 'TempSecretString',
+        resave: false,
+        saveUninitialized: false
+      })
+    )
   }
 
   views () {
