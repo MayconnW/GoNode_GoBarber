@@ -5,6 +5,7 @@ const redisClient = redis.createClient()
 const RedisStore = require('connect-redis')(session)
 const nunjucks = require('nunjucks')
 const path = require('path')
+const flash = require('connect-flash')
 
 class App {
   constructor () {
@@ -18,8 +19,10 @@ class App {
 
   middlewares () {
     this.express.use(express.urlencoded({ extended: false }))
+    this.express.use(flash())
     this.express.use(
       session({
+        name: 'root',
         store: new RedisStore({
           host: '127.0.0.1',
           port: 6379,
